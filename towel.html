@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			html,body{
+				height: 100%;
+				width: 100%;
+			}
+			.container{
+				height: calc(100% - 64px);
+				width: 100%;
+			}
+			.header{
+				width: 100%;
+				height: 64px;
+			}
+			.center{
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				justify-content: center;
+			}
+			.left-12{
+				margin-left: 12px;
+			}
+			svg{
+				height: 330px;
+				width: 600px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="header center">
+			<input id="text" type="text" value="LOGO"/>
+			<input class="left-12" id="color" type="text" value="#AAA"/>
+			<button class="left-12">
+				更新
+			</button>
+		</div>
+		<div class="container center">
+			<svg viewBox="0 0 600 330">
+				<defs>
+					<filter id="conform">
+						<feImage
+							href="img/towel.jpeg"
+							x="0"
+							y="0"
+							width="100%"
+							height="100%"
+							preserveAspectRatio="none"
+							result="ORIGINAL_IMG"/>
+						<feColorMatrix
+							in="ORIGINAL_IMG"
+							result="GRAY_IMG"
+							type="saturate"
+							values="0"
+						></feColorMatrix>
+						<feGaussianBlur in="GRAY_IMG" stdDeviation="0.25" result="MAP"></feGaussianBlur>
+						<feDisplacementMap
+							in="SourceGraphic"
+							in2="MAP"
+							scale="15"
+							xChannelSelector="R"
+							yChannelSelector="R"
+							result="TEXTURED_TEXT"/>
+						<feImage
+							href="img/towel.jpeg"
+							x="0"
+							y="0"
+							width="100%"
+							height="100%"
+							preserveAspectRatio="none"
+							result="BG"/>
+						<feColorMatrix
+							in="TEXTURED_TEXT"
+							result="OPACITY_TEXT"
+							type="matrix"
+							values="1 0 0 0 0
+											0 1 0 0 0
+											0 0 1 0 0
+											0 0 0 .9 0"
+						></feColorMatrix>
+						<feBlend
+							in="BG"
+							in2="OPACITY_TEXT"
+							mode="multiply"
+							result="BLENDED_TEXT"></feBlend>
+					</filter>
+				</defs>
+				<image
+					href="img/towel.jpeg"
+					x="0"
+					y="0"
+					width="100%"
+					height="100%"
+					preserveAspectRatio="none"/>
+				<text
+					x="50%"
+					y="50%"
+					font-size="140px"
+					font-weight="bold"
+					text-anchor="middle"
+					alignment-baseline="middle"
+					fill="#000"
+					filter="url(#conform)"
+					>LOGO</text>
+			</svg>
+		</div>
+		<script>
+			
+			const feImages = document.querySelectorAll('feImage');
+			const url = feImages[0].getAttribute('href');
+
+			fetch(url)
+					.then((response) => response.blob())
+					.then((blob) => {
+							const objURL = URL.createObjectURL(blob);
+
+							feImages.forEach((feImage) => {
+									feImage.setAttribute('href', objURL);
+							});
+					});
+		</script>
+	</body>
+</html>
